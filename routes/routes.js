@@ -12,13 +12,10 @@ const {
 transactionRouter.get("/:period", async (req, res, next) => {
   try {
     const periodo = req.params.period;
-    if (!periodo)
-      throw new Error(
-        "Erro - Necessário informar periodo de busca no formado yyyy-MM"
-      );
+    const ret = await getTransactions(periodo);
 
-    const data = await getTransactions(periodo);
-    res.send(JSON.stringify(data));
+    if (!ret) throw new Error("Erro - Dados não encontrados");
+    res.send(JSON.stringify(ret));
   } catch (error) {
     next(error);
   }
@@ -40,11 +37,9 @@ transactionRouter.put("/:id", async (req, res, next) => {
     const transaction = req.body;
     const id = req.params.id;
 
-    if (!id) throw new Error("Erro - Informe o id");
-
-    if (!transaction) throw new Error("Erro - Informe os dados de atualização");
-
     const ret = await alterTransaction(id, transaction);
+
+    if (!ret) throw new Error("Erro - Transaction não encontrada");
 
     res.send(JSON.stringify(ret));
   } catch (error) {
@@ -57,9 +52,8 @@ transactionRouter.delete("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
 
-    if (!id) throw new Error("Erro - Necessário informar o id");
-
-    const aux = await deleteTransaction(id);
+    const ret = await deleteTransaction(id);
+    if (!ret) throw new Error("Erro - Transaction não encontrada");
     await res.end();
   } catch (error) {
     next(error);
