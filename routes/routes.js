@@ -69,7 +69,7 @@ transactionRouter.delete("/:id", async (req, res, next) => {
 //TRATAMENTO DE ERRO GENERICO
 transactionRouter.use((err, req, res, next) => {
   console.log(`${req.method} ${req.baseUrl} - ${err.message}`);
-  res.status(400).send({ error: err.message });
+  res.status(500).send({ error: err.message });
 });
 
 module.exports = transactionRouter;
